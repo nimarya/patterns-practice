@@ -37,9 +37,20 @@ class CourseController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Course $course)
     {
-        //
+        return Inertia::render('courses/Show', [
+            'course' => [
+                'id' => $course->id,
+                'name' => $course->name,
+                'description' => $course->description,
+                'modules' => $course->modules->map(fn ($m) => [
+                    'id' => $m->id,
+                    'name' => $m->name,
+                    'description' => $m->description,
+                ]),
+            ],
+        ]);
     }
 
     /**

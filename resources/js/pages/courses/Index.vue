@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import AppLayout from '@/layouts/AppLayout.vue';
 import { type BreadcrumbItem } from '@/types';
-import { Head } from '@inertiajs/vue3';
+import { Head, Link } from '@inertiajs/vue3';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -29,7 +29,11 @@ defineProps<{
                 :key="course.id"
                 class="rounded-xl border border-gray-200 dark:border-sidebar-border p-4 shadow-sm"
             >
-                <h2 class="text-lg font-semibold mb-2">{{ course.name }}</h2>
+                <h2 class="text-lg font-semibold mb-2">
+                    <Link :href="`/courses/${course.id}`" class="text-rose-800 hover:text-rose-600">
+                        {{ course.name }}
+                    </Link>
+                </h2>
                 <p class="text-gray-600 dark:text-gray-400">{{ course.description }}</p>
             </div>
         </div>
