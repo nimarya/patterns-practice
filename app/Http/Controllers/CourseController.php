@@ -31,7 +31,16 @@ class CourseController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'name' => 'required|max:255',
+            'description' => 'required',
+            'user_id' => 'required|exists:App\Models\User,id',
+        ]);
+
+        $course = new Course($validated);
+        $course->save();
+
+        return redirect(route('courses.index'));
     }
 
     /**
