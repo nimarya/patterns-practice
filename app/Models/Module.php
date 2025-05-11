@@ -23,4 +23,9 @@ class Module extends Model
     {
         return $this->belongsTo(Course::class);
     }
+
+    public function test(): BelongsTo
+    {
+        return $this->belongsTo(Test::class);
+    }
 }

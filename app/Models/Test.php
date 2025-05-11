@@ -16,4 +16,9 @@ class Test extends Model
     {
         return $this->hasMany(Lesson::class);
     }
+
+    public function modules(): HasMany
+    {
+        return $this->hasMany(Module::class);
+    }
 }

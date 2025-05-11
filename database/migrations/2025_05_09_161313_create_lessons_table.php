@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('video');
             $table->text('body');
             $table->foreignId('module_id')->constrained('modules')->onDelete('cascade');
+            $table->foreignId('test_id')->nullable()->constrained('tests')->nullOnDelete();
             $table->timestamps();
         });
     }
