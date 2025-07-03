@@ -1,13 +1,9 @@
 <script setup lang="ts">
 import AppLayout from '@/layouts/AppLayout.vue';
-import { type BreadcrumbItem } from '@/types';
 import { Head, Link } from '@inertiajs/vue3';
 
-const breadcrumbs: BreadcrumbItem[] = [
-    {
-        title: 'Courses',
-        href: '/courses',
-    },
+const breadcrumbs = [
+    { title: 'Courses', href: '/courses' },
 ];
 
 defineProps<{
@@ -23,6 +19,16 @@ defineProps<{
     <Head title="Courses" />
 
     <AppLayout :breadcrumbs="breadcrumbs">
+        <div class="flex justify-between items-center p-4">
+            <h1 class="text-2xl font-bold">Courses</h1>
+            <Link
+                href="/courses/create"
+                class="bg-rose-800 text-white px-4 py-2 rounded-xl hover:bg-rose-600"
+            >
+                Create Course
+            </Link>
+        </div>
+
         <div class="grid grid-cols-1 gap-4 p-4 md:grid-cols-2 lg:grid-cols-3">
             <div
                 v-for="course in courses"
