@@ -3,7 +3,7 @@
 namespace App\Services\Course\Builders;
 
 use App\Models\Course;
-use App\Models\Module;
+use App\Models\Lesson;
 
 class VideoCourseBuilder implements CourseBuilderInterface
 {
@@ -29,15 +29,15 @@ class VideoCourseBuilder implements CourseBuilderInterface
         $this->videoCourse->user_id = $userId;
     }
 
-    public function addModules(int $modulesNumber): void
+    public function addLessons(int $modulesNumber): void
     {
-        for ($i = 1; $i <= $modulesNumber; $i++) {
-            $module = new Module([
-                'name'        => 'module '. $i,
-                'description' => 'module description '. $i,
+        for ($i = 1; $i <= $modulesNumber * 4; $i++) {
+            $lesson = new Lesson([
+                'name'        => 'lesson '. $i,
+                'description' => 'lesson description '. $i,
                 'course_id'   => $this->videoCourse->id,
             ]);
-            $module->save();
+            $lesson->save();
         }
     }
 

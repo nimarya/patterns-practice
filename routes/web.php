@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\CourseController;
+use App\Http\Controllers\LessonController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -12,7 +13,10 @@ Route::get('dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-Route::resource('courses', CourseController::class)->middleware(['auth', 'verified']);
+Route::resources([
+    'courses' => CourseController::class,
+    'lessons' => LessonController::class,
+]);
 
 require __DIR__.'/settings.php';
 require __DIR__.'/auth.php';

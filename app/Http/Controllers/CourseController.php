@@ -82,7 +82,7 @@ class CourseController extends Controller
                 'id' => $course->id,
                 'name' => $course->name,
                 'description' => $course->description,
-                'modules' => $course->modules->map(fn ($m) => [
+                'lessons' => $course->lessons->map(fn ($m) => [
                     'id' => $m->id,
                     'name' => $m->name,
                     'description' => $m->description,

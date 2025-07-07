@@ -12,12 +12,12 @@ class Lesson extends Model
         'description',
         'video',
         'body',
-        'module_id',
+        'course_id',
     ];
 
-    public function module(): BelongsTo
+    public function course(): BelongsTo
     {
-        return $this->belongsTo(Module::class);
+        return $this->belongsTo(Course::class);
     }
 
     public function test(): BelongsTo

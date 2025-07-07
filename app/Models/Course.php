@@ -16,8 +16,8 @@ class Course extends Model
         'user_id',
     ];
 
-    public function modules(): HasMany
+    public function lessons(): HasMany
     {
-        return $this->hasMany(Module::class);
+        return $this->hasMany(Lesson::class);
     }
 }

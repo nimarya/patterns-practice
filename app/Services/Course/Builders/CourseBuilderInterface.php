@@ -14,7 +14,7 @@ interface CourseBuilderInterface
 
     public function setAuthor(int $userId): void;
 
-    public function addModules(int $modulesNumber): void;
+    public function addLessons(int $modulesNumber): void;
 
     public function saveCourse(): void;
 

@@ -19,7 +19,7 @@ class CourseDirector
         $builder->setDescription($attributes['description']);
         $builder->setAuthor($attributes['author_id']);
         $builder->saveCourse();
-        $builder->addModules($modulesNumber);
+        $builder->addLessons($modulesNumber);
         return $builder->getCourse();
     }
 }
