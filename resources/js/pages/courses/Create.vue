@@ -14,14 +14,29 @@ const currentUserId = page.props.auth.user.id;
 const name = ref('');
 const description = ref('');
 const type = ref('major_semester');
+const photo = ref<File | null>(null);
+const photoPreview = ref<string | null>(null);
+
+function handleFileChange(event: Event) {
+    const target = event.target as HTMLInputElement;
+    if (target.files && target.files[0]) {
+        photo.value = target.files[0];
+        photoPreview.value = URL.createObjectURL(target.files[0]);
+    }
+}
 
 function submit() {
-    router.post('/courses', {
-        name: name.value,
-        description: description.value,
-        user_id: currentUserId,
-        type: type.value,
-    });
+    const formData = new FormData();
+    formData.append('name', name.value);
+    formData.append('description', description.value);
+    formData.append('user_id', currentUserId);
+    formData.append('type', type.value);
+
+    if (photo.value) {
+        formData.append('photo', photo.value);
+    }
+
+    router.post('/courses', formData);
 }
 </script>
 
@@ -52,6 +67,24 @@ function submit() {
                 <option value="minor_semester">Minor Semester</option>
                 <option value="minor_year">Minor Year</option>
             </select>
+
+            <div
+                class="p-4 border-dashed border-2 border-gray-300 rounded-xl text-center cursor-pointer hover:border-rose-500 relative"
+            >
+                <p class="mb-2">Upload Course Cover</p>
+
+                <div v-if="photo" class="flex flex-col items-center mb-2">
+                    <p class="text-rose-800 font-medium">File selected: {{ photo.name }}</p>
+                    <img v-if="photoPreview" :src="photoPreview" class="h-32 object-contain rounded mt-2" />
+                </div>
+
+                <input
+                    type="file"
+                    @change="handleFileChange"
+                    class="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                />
+            </div>
+
 
             <button @click="submit" class="bg-rose-800 text-white px-4 py-2 rounded-xl hover:bg-rose-600">
                 Create Course

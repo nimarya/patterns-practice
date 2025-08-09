@@ -16,7 +16,7 @@ class CourseController extends Controller
     public function index()
     {
         return Inertia::render('courses/Index', [
-            'courses' => Course::select('id', 'name', 'description')->get(),
+            'courses' => Course::select('id', 'name', 'description', 'photo')->get(),
         ]);
     }
 
@@ -38,6 +38,7 @@ class CourseController extends Controller
             'description' => 'required',
             'user_id' => 'required|exists:App\Models\User,id',
             'type' => 'required|in:major_semester,major_year,minor_semester,minor_year',
+            'photo' => 'nullable|image|max:5120',
         ]);
     
         $director = new CourseDirector();
@@ -48,8 +49,12 @@ class CourseController extends Controller
             'description' => $validated['description'],
             'author_id' => $validated['user_id'],
         ];
+
+        if ($request->hasFile('photo')) {
+            $path = $request->file('photo')->store('courses', 'public');
+            $attributes['photo'] = $path;
+        }
     
-        // Выбор типа курса
         switch ($validated['type']) {
             case 'major_semester':
                 $course = $director->buildCourse($builder, $attributes, CourseDirector::MODULES_MAJOR_SEMESTER);

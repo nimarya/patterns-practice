@@ -29,6 +29,11 @@ class VideoCourseBuilder implements CourseBuilderInterface
         $this->videoCourse->user_id = $userId;
     }
 
+    public function setPhoto(?string $photo = null): void
+    {
+        $this->videoCourse->photo = $photo;
+    }
+
     public function addLessons(int $modulesNumber): void
     {
         for ($i = 1; $i <= $modulesNumber * 4; $i++) {

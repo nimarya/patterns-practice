@@ -11,6 +11,7 @@ defineProps<{
         id: number;
         name: string;
         description: string;
+        photo: string;
     }[]
 }>();
 </script>
@@ -30,18 +31,27 @@ defineProps<{
         </div>
 
         <div class="grid grid-cols-1 gap-4 p-4 md:grid-cols-2 lg:grid-cols-3">
-            <div
+            <Link
                 v-for="course in courses"
                 :key="course.id"
-                class="rounded-xl border border-gray-200 dark:border-sidebar-border p-4 shadow-sm"
+                :href="`/courses/${course.id}`"
+                class="rounded-xl border border-gray-200 dark:border-sidebar-border p-4 shadow-sm space-y-2 block transition hover:bg-gray-100 dark:hover:bg-gray-800"
             >
-                <h2 class="text-lg font-semibold mb-2">
-                    <Link :href="`/courses/${course.id}`" class="text-rose-800 hover:text-rose-600">
-                        {{ course.name }}
-                    </Link>
+                <img
+                    v-if="course.photo"
+                    :src="`/storage/${course.photo}`"
+                    alt="Course Cover"
+                    class="w-full h-40 object-cover rounded"
+                />
+
+                <h2 class="text-lg font-semibold text-rose-800">
+                    {{ course.name }}
                 </h2>
+                
                 <p class="text-gray-600 dark:text-gray-400">{{ course.description }}</p>
-            </div>
+            </Link>
         </div>
+
+
     </AppLayout>
 </template>

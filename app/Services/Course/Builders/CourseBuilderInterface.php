@@ -14,6 +14,8 @@ interface CourseBuilderInterface
 
     public function setAuthor(int $userId): void;
 
+    public function setPhoto(?string $photo = null): void;
+
     public function addLessons(int $modulesNumber): void;
 
     public function saveCourse(): void;

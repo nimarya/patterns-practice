@@ -18,6 +18,7 @@ class CourseDirector
         $builder->setName($attributes['name']);
         $builder->setDescription($attributes['description']);
         $builder->setAuthor($attributes['author_id']);
+        $builder->setPhoto($attributes['photo'] ?? null);
         $builder->saveCourse();
         $builder->addLessons($modulesNumber);
         return $builder->getCourse();
