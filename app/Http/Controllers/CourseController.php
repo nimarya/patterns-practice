@@ -6,6 +6,7 @@ use App\Models\Course;
 use App\Services\Course\Builders\VideoCourseBuilder;
 use App\Services\Course\CourseDirector;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
 class CourseController extends Controller
@@ -17,6 +18,9 @@ class CourseController extends Controller
     {
         return Inertia::render('courses/Index', [
             'courses' => Course::select('id', 'name', 'description', 'photo')->get(),
+            'can' => [
+                'createCourse' => fn () => Auth::user()?->can('create course') ?? false,
+            ],
         ]);
     }
 

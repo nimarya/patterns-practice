@@ -13,6 +13,9 @@ defineProps<{
         description: string;
         photo: string;
     }[]
+    can: {
+        createCourse: boolean
+    }
 }>();
 </script>
 
@@ -20,7 +23,7 @@ defineProps<{
     <Head title="Courses" />
 
     <AppLayout :breadcrumbs="breadcrumbs">
-        <div class="flex justify-between items-center p-4">
+        <div v-if="can.createCourse" class="flex justify-between items-center p-4">
             <h1 class="text-2xl font-bold">Courses</h1>
             <Link
                 href="/courses/create"

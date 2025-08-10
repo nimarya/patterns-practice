@@ -6,6 +6,9 @@ use App\Models\Course;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
+use Spatie\Permission\PermissionRegistrar;
 use Tests\TestCase;
 
 class CourseControllerTest extends TestCase
@@ -37,6 +40,8 @@ class CourseControllerTest extends TestCase
     {
         $user = User::factory()->create();
 
+        $user->assignRole($this->getTeacherRole());
+
         $data = [
             'name' => 'Test course',
             'description' => 'Test course description',
@@ -58,8 +63,17 @@ class CourseControllerTest extends TestCase
         $course = Course::where('name', 'Test course')->first();
         $this->assertNotNull($course);
 
-        $this->assertDatabaseCount('modules', 4);
+        $this->assertDatabaseCount('lessons', 16);
+        $this->assertTrue($course->lessons()->count() === 16);
+    }
 
-        $this->assertTrue($course->modules()->count() === 4);
+    private function getTeacherRole(): Role
+    {
+        app(PermissionRegistrar::class)->forgetCachedPermissions();
+
+        $permission = Permission::create(['name' => 'create course']);
+        $role = Role::create(['name' => 'teacher']);
+
+        return $role->givePermissionTo($permission);
     }
 }

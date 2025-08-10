@@ -18,5 +18,10 @@ Route::resources([
     'lessons' => LessonController::class,
 ]);
 
+Route::middleware('permission:create course')->group(function () {
+    Route::get('courses/create', [CourseController::class, 'create'])->name('courses.create');
+    Route::post('courses', [CourseController::class, 'store'])->name('courses.store');
+});
+
 require __DIR__.'/settings.php';
 require __DIR__.'/auth.php';
