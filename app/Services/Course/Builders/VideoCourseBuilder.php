@@ -11,7 +11,7 @@ class VideoCourseBuilder implements CourseBuilderInterface
 
     public function reset(): void
     {
-        $this->videoCourse = new Course();
+        $this->videoCourse = new Course;
     }
 
     public function setName(string $name): void
@@ -29,6 +29,12 @@ class VideoCourseBuilder implements CourseBuilderInterface
         $this->videoCourse->user_id = $userId;
     }
 
+    public function setPrice(int $priceCents, string $currency): void
+    {
+        $this->videoCourse->price_cents = $priceCents;
+        $this->videoCourse->currency = $currency;
+    }
+
     public function setPhoto(?string $photo = null): void
     {
         $this->videoCourse->photo = $photo;
@@ -38,9 +44,9 @@ class VideoCourseBuilder implements CourseBuilderInterface
     {
         for ($i = 1; $i <= $modulesNumber * 4; $i++) {
             $lesson = new Lesson([
-                'name'        => 'lesson '. $i,
-                'description' => 'lesson description '. $i,
-                'course_id'   => $this->videoCourse->id,
+                'name' => 'lesson '.$i,
+                'description' => 'lesson description '.$i,
+                'course_id' => $this->videoCourse->id,
             ]);
             $lesson->save();
         }

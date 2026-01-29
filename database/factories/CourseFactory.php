@@ -21,6 +21,8 @@ class CourseFactory extends Factory
             'name' => $this->faker->sentence(3),
             'description' => $this->faker->paragraph(),
             'user_id' => User::factory(),
+            'price_cents' => $this->faker->numberBetween(1000, 20000),
+            'currency' => 'usd',
         ];
     }
 }
