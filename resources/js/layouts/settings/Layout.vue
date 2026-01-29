@@ -26,17 +26,22 @@ const currentPath = page.props.ziggy?.location ? new URL(page.props.ziggy.locati
 </script>
 
 <template>
-    <div class="px-4 py-6">
+    <div class="rounded-3xl border border-border/60 bg-white/80 p-8 shadow-sm backdrop-blur dark:bg-slate-950/70">
         <Heading title="Settings" description="Manage your profile and account settings" />
 
-        <div class="flex flex-col space-y-8 md:space-y-0 lg:flex-row lg:space-x-12 lg:space-y-0">
-            <aside class="w-full max-w-xl lg:w-48">
-                <nav class="flex flex-col space-x-0 space-y-1">
+        <div class="flex flex-col gap-8 lg:flex-row lg:gap-12">
+            <aside class="w-full max-w-xl lg:w-56">
+                <nav class="flex flex-col gap-2">
                     <Button
                         v-for="item in sidebarNavItems"
                         :key="item.href"
                         variant="ghost"
-                        :class="['w-full justify-start', { 'bg-muted': currentPath === item.href }]"
+                        :class="[
+                            'w-full justify-start rounded-2xl px-4 py-2 text-sm font-medium transition',
+                            currentPath === item.href
+                                ? 'bg-emerald-100 text-emerald-900 shadow-sm dark:bg-emerald-500/20 dark:text-emerald-100'
+                                : 'text-muted-foreground hover:bg-muted/70 hover:text-foreground dark:hover:bg-muted/40',
+                        ]"
                         as-child
                     >
                         <Link :href="item.href">
@@ -46,10 +51,10 @@ const currentPath = page.props.ziggy?.location ? new URL(page.props.ziggy.locati
                 </nav>
             </aside>
 
-            <Separator class="my-6 md:hidden" />
+            <Separator class="lg:hidden" />
 
             <div class="flex-1 md:max-w-2xl">
-                <section class="max-w-xl space-y-12">
+                <section class="flex flex-col gap-12">
                     <slot />
                 </section>
             </div>

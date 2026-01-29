@@ -17,8 +17,8 @@ const props = defineProps<{
 }>();
 
 const breadcrumbs: BreadcrumbItem[] = [
-    { title: 'Courses', href: '/courses' },
-    { title: props.course.name, href: '' },
+    { title: 'Courses', href: route('courses.index') },
+    { title: props.course.name, href: route('courses.show', props.course.id) },
 ];
 </script>
 
@@ -26,24 +26,43 @@ const breadcrumbs: BreadcrumbItem[] = [
     <Head :title="props.course.name" />
 
     <AppLayout :breadcrumbs="breadcrumbs">
-        <div class="p-6">
-            <h1 class="text-2xl font-bold mb-2">{{ props.course.name }}</h1>
-            <p class="text-gray-700 dark:text-gray-300 mb-6">{{ props.course.description }}</p>
-
-            <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-                <div
-                    v-for="lesson in props.course.lessons"
-                    :key="lesson.id"
-                    class="rounded-xl border border-gray-200 dark:border-sidebar-border p-4 shadow-sm"
+        <section class="flex flex-col gap-6 rounded-3xl border border-border/60 bg-white/80 p-8 shadow-sm backdrop-blur dark:bg-slate-950/70">
+            <div class="flex flex-col gap-3">
+                <p class="text-xs font-semibold uppercase tracking-[0.2em] text-emerald-600/80 dark:text-emerald-300/70">Course detail</p>
+                <h1 class="text-3xl font-semibold tracking-tight text-foreground">{{ props.course.name }}</h1>
+                <p class="max-w-2xl text-sm text-muted-foreground">{{ props.course.description }}</p>
+            </div>
+            <div class="flex flex-wrap gap-3">
+                <Link
+                    :href="route('courses.index')"
+                    class="rounded-full border border-border/70 px-5 py-2.5 text-sm font-semibold text-foreground transition hover:border-emerald-200 hover:text-emerald-900 dark:hover:text-emerald-100"
                 >
-                    <h3 class="text-lg font-semibold mb-2">
-                        <Link :href="`/lessons/${lesson.id}`" class="text-rose-800 hover:text-rose-600">
+                    Back to catalog
+                </Link>
+            </div>
+        </section>
+
+        <section class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+            <div
+                v-for="lesson in props.course.lessons"
+                :key="lesson.id"
+                class="rounded-3xl border border-border/60 bg-white/80 p-5 shadow-sm transition hover:-translate-y-1 hover:shadow-lg dark:bg-slate-950/70"
+            >
+                <div class="flex flex-col gap-3">
+                    <h3 class="text-lg font-semibold text-foreground">
+                        <Link :href="route('lessons.show', lesson.id)" class="hover:text-emerald-700 dark:hover:text-emerald-300">
                             {{ lesson.name }}
                         </Link>
                     </h3>
-                    <p class="text-gray-600 dark:text-gray-400">{{ lesson.description }}</p>
+                    <p class="text-sm text-muted-foreground">{{ lesson.description }}</p>
+                    <Link
+                        :href="route('lessons.show', lesson.id)"
+                        class="text-sm font-semibold text-emerald-700 hover:text-emerald-800 dark:text-emerald-300"
+                    >
+                        Open lesson
+                    </Link>
                 </div>
             </div>
-        </div>
+        </section>
     </AppLayout>
 </template>

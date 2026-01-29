@@ -5,8 +5,8 @@ import { Head, Link, router } from '@inertiajs/vue3';
 import { onMounted, ref } from 'vue';
 
 const breadcrumbs: BreadcrumbItem[] = [
-    { title: 'Courses', href: '/courses' },
-    { title: 'My Courses', href: '/my-courses' },
+    { title: 'Courses', href: route('courses.index') },
+    { title: 'My Courses', href: route('courses.mine') },
 ];
 
 const props = defineProps<{
@@ -53,12 +53,16 @@ onMounted(() => {
     <Head title="My Courses" />
 
     <AppLayout :breadcrumbs="breadcrumbs">
-        <div class="p-4 space-y-4">
-            <div class="flex items-center justify-between">
-                <h1 class="text-2xl font-bold">My Courses</h1>
+        <section class="flex flex-col gap-6 rounded-3xl border border-border/60 bg-white/80 p-8 shadow-sm backdrop-blur dark:bg-slate-950/70">
+            <div class="flex flex-wrap items-center justify-between gap-4">
+                <div class="flex flex-col gap-2">
+                    <p class="text-xs font-semibold uppercase tracking-[0.2em] text-emerald-600/80 dark:text-emerald-300/70">My library</p>
+                    <h1 class="text-3xl font-semibold tracking-tight text-foreground">My Courses</h1>
+                    <p class="text-sm text-muted-foreground">Jump back into your active learning paths.</p>
+                </div>
                 <Link
-                    href="/courses"
-                    class="text-sm text-gray-600 hover:text-gray-800 dark:text-gray-300 dark:hover:text-white"
+                    :href="route('courses.index')"
+                    class="rounded-full border border-border/70 px-5 py-2 text-sm font-semibold text-foreground transition hover:border-emerald-200 hover:text-emerald-900 dark:hover:text-emerald-100"
                 >
                     Browse all courses
                 </Link>
@@ -66,47 +70,51 @@ onMounted(() => {
 
             <div
                 v-if="showNotice"
-                class="rounded-xl border border-amber-200 bg-amber-50 p-4 text-amber-800 dark:border-amber-500/30 dark:bg-amber-500/10 dark:text-amber-200"
+                class="rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-900 dark:border-emerald-500/30 dark:bg-emerald-500/10 dark:text-emerald-100"
             >
                 Payment succeeded. Your course access will be granted shortly.
             </div>
-        </div>
+        </section>
 
-        <div v-if="props.courses.length === 0" class="p-6">
-            <div class="rounded-xl border border-dashed border-gray-200 dark:border-sidebar-border p-6 text-center">
-                <p class="text-gray-600 dark:text-gray-300">You haven’t purchased any courses yet.</p>
-                <Link
-                    href="/courses"
-                    class="mt-4 inline-flex items-center rounded-full bg-rose-800 px-5 py-2 text-white hover:bg-rose-600"
-                >
-                    Browse courses
-                </Link>
-            </div>
-        </div>
+        <section v-if="props.courses.length === 0" class="rounded-3xl border border-dashed border-border/70 bg-white/60 p-10 text-center shadow-sm backdrop-blur dark:bg-slate-950/60">
+            <p class="text-sm text-muted-foreground">You haven’t purchased any courses yet.</p>
+            <Link
+                :href="route('courses.index')"
+                class="mt-6 inline-flex items-center rounded-full bg-emerald-500 px-6 py-2.5 text-sm font-semibold text-white shadow-sm shadow-emerald-200/60 transition hover:bg-emerald-600 dark:shadow-emerald-500/10"
+            >
+                Browse courses
+            </Link>
+        </section>
 
-        <div v-else class="grid grid-cols-1 gap-4 p-4 md:grid-cols-2 lg:grid-cols-3">
+        <section v-else class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
             <Link
                 v-for="course in props.courses"
                 :key="course.id"
-                :href="`/courses/${course.id}`"
-                class="rounded-xl border border-emerald-200 bg-emerald-50/40 p-4 shadow-sm transition hover:bg-emerald-50 dark:border-emerald-500/30 dark:bg-emerald-500/10 dark:hover:bg-emerald-500/20"
+                :href="route('courses.show', course.id)"
+                class="group flex h-full flex-col overflow-hidden rounded-3xl border border-border/60 bg-white/80 shadow-sm transition hover:-translate-y-1 hover:shadow-lg dark:bg-slate-950/70"
             >
-                <img
-                    v-if="course.photo"
-                    :src="`/storage/${course.photo}`"
-                    alt="Course Cover"
-                    class="w-full h-40 object-cover rounded"
-                />
-
-                <h2 class="mt-2 text-lg font-semibold text-rose-800">
-                    {{ course.name }}
-                </h2>
-
-                <p class="text-gray-600 dark:text-gray-400">{{ course.description }}</p>
-                <p class="text-sm font-medium text-gray-700 dark:text-gray-300">
-                    {{ formatPrice(course.price_cents, course.currency) }}
-                </p>
+                <div class="relative h-44 overflow-hidden">
+                    <img
+                        v-if="course.photo"
+                        :src="`/storage/${course.photo}`"
+                        alt="Course Cover"
+                        class="h-full w-full object-cover transition duration-500 group-hover:scale-105"
+                    />
+                    <div v-else class="flex h-full w-full items-center justify-center bg-emerald-50 text-sm text-emerald-900 dark:bg-emerald-500/10 dark:text-emerald-100">
+                        No cover yet
+                    </div>
+                </div>
+                <div class="flex flex-1 flex-col gap-3 p-5">
+                    <h2 class="text-lg font-semibold text-foreground">{{ course.name }}</h2>
+                    <p class="text-sm text-muted-foreground">{{ course.description }}</p>
+                    <div class="mt-auto flex items-center justify-between text-sm">
+                        <span class="font-semibold text-emerald-700 dark:text-emerald-300">
+                            {{ formatPrice(course.price_cents, course.currency) }}
+                        </span>
+                        <span class="text-xs font-medium text-muted-foreground">Continue</span>
+                    </div>
+                </div>
             </Link>
-        </div>
+        </section>
     </AppLayout>
 </template>

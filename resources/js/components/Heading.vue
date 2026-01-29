@@ -8,8 +8,8 @@ defineProps<Props>();
 </script>
 
 <template>
-    <div class="mb-8 space-y-0.5">
-        <h2 class="text-xl font-semibold tracking-tight">{{ title }}</h2>
+    <div class="mb-8 flex flex-col gap-1">
+        <h2 class="text-2xl font-semibold tracking-tight text-foreground">{{ title }}</h2>
         <p v-if="description" class="text-sm text-muted-foreground">
             {{ description }}
         </p>

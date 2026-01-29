@@ -2,10 +2,13 @@
 import AppLayout from '@/layouts/AppLayout.vue';
 import { Head, router, usePage } from '@inertiajs/vue3';
 import { ref } from 'vue';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 
 const breadcrumbs = [
-    { title: 'Courses', href: '/courses' },
-    { title: 'Create', href: '/courses/create' },
+    { title: 'Courses', href: route('courses.index') },
+    { title: 'Create', href: route('courses.create') },
 ];
 
 const page = usePage();
@@ -39,7 +42,7 @@ function submit() {
         formData.append('photo', photo.value);
     }
 
-    router.post('/courses', formData);
+    router.post(route('courses.store'), formData);
 }
 </script>
 
@@ -47,60 +50,66 @@ function submit() {
     <Head title="Create Course" />
 
     <AppLayout :breadcrumbs="breadcrumbs">
-        <div class="max-w-xl mx-auto p-4 space-y-4">
-            <h1 class="text-2xl font-bold mb-4">Create Course</h1>
-
-            <input
-                v-model="name"
-                type="text"
-                placeholder="Course Name"
-                class="border rounded p-2 w-full"
-            />
-
-            <textarea
-                v-model="description"
-                placeholder="Description"
-                rows="4"
-                class="border rounded p-2 w-full"
-            ></textarea>
-
-            <input
-                v-model="price"
-                type="number"
-                step="0.01"
-                min="0.01"
-                placeholder="Price (USD)"
-                class="border rounded p-2 w-full"
-            />
-
-            <select v-model="type" class="border rounded p-2 w-full">
-                <option value="major_semester">Major Semester</option>
-                <option value="major_year">Major Year</option>
-                <option value="minor_semester">Minor Semester</option>
-                <option value="minor_year">Minor Year</option>
-            </select>
-
-            <div
-                class="p-4 border-dashed border-2 border-gray-300 rounded-xl text-center cursor-pointer hover:border-rose-500 relative"
-            >
-                <p class="mb-2">Upload Course Cover</p>
-
-                <div v-if="photo" class="flex flex-col items-center mb-2">
-                    <p class="text-rose-800 font-medium">File selected: {{ photo.name }}</p>
-                    <img v-if="photoPreview" :src="photoPreview" class="h-32 object-contain rounded mt-2" />
-                </div>
-
-                <input
-                    type="file"
-                    @change="handleFileChange"
-                    class="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                />
+        <section class="mx-auto flex w-full max-w-2xl flex-col gap-6 rounded-3xl border border-border/60 bg-white/80 p-8 shadow-sm backdrop-blur dark:bg-slate-950/70">
+            <div class="flex flex-col gap-2">
+                <p class="text-xs font-semibold uppercase tracking-[0.2em] text-emerald-600/80 dark:text-emerald-300/70">Create course</p>
+                <h1 class="text-3xl font-semibold tracking-tight text-foreground">Craft a new learning path</h1>
+                <p class="text-sm text-muted-foreground">Add a title, description, and pricing to publish a new course.</p>
             </div>
 
+            <form @submit.prevent="submit" class="flex flex-col gap-6">
+                <div class="grid gap-2">
+                    <Label for="name">Course name</Label>
+                    <Input id="name" v-model="name" type="text" placeholder="Modern Architecture Patterns" />
+                </div>
 
-            <button @click="submit" class="bg-rose-800 text-white px-4 py-2 rounded-xl hover:bg-rose-600">
-                Create Course
-            </button>
-        </div>
+                <div class="grid gap-2">
+                    <Label for="description">Description</Label>
+                    <textarea
+                        id="description"
+                        v-model="description"
+                        rows="4"
+                        placeholder="Describe what students will learn and the outcomes."
+                        class="w-full rounded-2xl border border-border/70 bg-white px-4 py-3 text-sm text-foreground shadow-sm focus:border-emerald-200 focus:outline-none focus:ring-4 focus:ring-emerald-200/40 dark:bg-slate-950 dark:text-emerald-50"
+                    ></textarea>
+                </div>
+
+                <div class="grid gap-2">
+                    <Label for="price">Price (USD)</Label>
+                    <Input id="price" v-model="price" type="number" step="0.01" min="0.01" placeholder="99.00" />
+                </div>
+
+                <div class="grid gap-2">
+                    <Label for="type">Course type</Label>
+                    <select
+                        id="type"
+                        v-model="type"
+                        class="w-full rounded-2xl border border-border/70 bg-white px-4 py-3 text-sm text-foreground shadow-sm focus:border-emerald-200 focus:outline-none focus:ring-4 focus:ring-emerald-200/40 dark:bg-slate-950 dark:text-emerald-50"
+                    >
+                        <option value="major_semester">Major Semester</option>
+                        <option value="major_year">Major Year</option>
+                        <option value="minor_semester">Minor Semester</option>
+                        <option value="minor_year">Minor Year</option>
+                    </select>
+                </div>
+
+                <div class="grid gap-3">
+                    <Label>Course cover</Label>
+                    <label
+                        class="relative flex cursor-pointer flex-col gap-3 rounded-2xl border border-dashed border-border/70 bg-white/60 p-6 text-center text-sm text-muted-foreground transition hover:border-emerald-200 dark:bg-slate-950/60"
+                    >
+                        <span>Upload a cover image for the course.</span>
+                        <span class="text-xs">PNG or JPG · up to 5MB</span>
+                        <div v-if="photo" class="flex flex-col gap-2 text-sm text-emerald-700 dark:text-emerald-300">
+                            <span>File selected: {{ photo.name }}</span>
+                            <img v-if="photoPreview" :src="photoPreview" class="h-32 rounded-2xl object-cover" />
+                        </div>
+                        <input type="file" @change="handleFileChange" class="absolute inset-0 h-full w-full opacity-0" />
+                    </label>
+                </div>
+
+                <Button type="submit" class="w-full">Create course</Button>
+            </form>
+        </section>
     </AppLayout>
 </template>
