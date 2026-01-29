@@ -3,7 +3,7 @@ import AppLayout from '@/layouts/AppLayout.vue';
 import { Head, Link } from '@inertiajs/vue3';
 
 const breadcrumbs = [
-    { title: 'Courses', href: '/courses' },
+    { title: 'Courses', href: route('courses.index') },
 ];
 
 const { courses, ownedCourseIds, authoredCourseIds, can } = defineProps<{
@@ -51,74 +51,80 @@ function formatPrice(priceCents: number, currency: string) {
     <Head title="Courses" />
 
     <AppLayout :breadcrumbs="breadcrumbs">
-        <div v-if="can.createCourse" class="flex justify-between items-center p-4">
-            <h1 class="text-2xl font-bold">Courses</h1>
-            <Link
-                href="/courses/create"
-                class="bg-rose-800 text-white px-4 py-2 rounded-xl hover:bg-rose-600"
-            >
-                Create Course
-            </Link>
-        </div>
+        <section class="flex flex-col gap-6 rounded-3xl border border-border/60 bg-white/80 p-8 shadow-sm backdrop-blur dark:bg-slate-950/70">
+            <div class="flex flex-wrap items-center justify-between gap-4">
+                <div class="flex flex-col gap-2">
+                    <p class="text-xs font-semibold uppercase tracking-[0.2em] text-emerald-600/80 dark:text-emerald-300/70">Course catalog</p>
+                    <h1 class="text-3xl font-semibold tracking-tight text-foreground">Courses</h1>
+                    <p class="text-sm text-muted-foreground">Browse clean, structured patterns for focused learning.</p>
+                </div>
+                <Link
+                    v-if="can.createCourse"
+                    :href="route('courses.create')"
+                    class="rounded-full bg-emerald-500 px-5 py-2.5 text-sm font-semibold text-white shadow-sm shadow-emerald-200/60 transition hover:bg-emerald-600 dark:shadow-emerald-500/10"
+                >
+                    Create course
+                </Link>
+            </div>
+        </section>
 
-        <div class="grid grid-cols-1 gap-4 p-4 md:grid-cols-2 lg:grid-cols-3">
+        <section class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
             <div
                 v-for="course in courses"
                 :key="course.id"
-                :class="[
-                    'group relative rounded-xl border border-gray-200 dark:border-sidebar-border p-4 shadow-sm transition hover:bg-gray-100 dark:hover:bg-gray-800',
-                    isAuthored(course.id)
-                        ? 'border-sky-200 bg-sky-50/40 dark:bg-sky-500/10 dark:border-sky-500/30'
-                        : '',
-                    isOwned(course.id)
-                        ? 'border-emerald-200 bg-emerald-50/40 dark:bg-emerald-500/10 dark:border-emerald-500/30'
-                        : '',
-                ]"
+                class="group relative flex h-full flex-col overflow-hidden rounded-3xl border border-border/60 bg-white/80 shadow-sm transition hover:-translate-y-1 hover:shadow-lg dark:bg-slate-950/70"
             >
-                <span
-                    v-if="isAuthored(course.id)"
-                    class="absolute right-3 top-3 rounded-full bg-sky-100 px-3 py-1 text-xs font-semibold text-sky-800 dark:bg-sky-500/20 dark:text-sky-200"
-                >
-                    Your course
-                </span>
-                <span
-                    v-else-if="isOwned(course.id)"
-                    class="absolute right-3 top-3 rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-800 dark:bg-emerald-500/20 dark:text-emerald-200"
-                >
-                    Owned
-                </span>
-                <Link :href="`/courses/${course.id}`" class="block space-y-2">
+                <div class="relative h-44 overflow-hidden">
                     <img
                         v-if="course.photo"
                         :src="`/storage/${course.photo}`"
                         alt="Course Cover"
-                        class="w-full h-40 object-cover rounded"
+                        class="h-full w-full object-cover transition duration-500 group-hover:scale-105"
                     />
-
-                    <h2 class="text-lg font-semibold text-rose-800">
-                        {{ course.name }}
-                    </h2>
-                    
-                    <p class="text-gray-600 dark:text-gray-400">{{ course.description }}</p>
-                    <p class="text-sm font-medium text-gray-700 dark:text-gray-300">
-                        {{ formatPrice(course.price_cents, course.currency) }}
-                    </p>
-                </Link>
+                    <div v-else class="flex h-full w-full items-center justify-center bg-emerald-50 text-sm text-emerald-900 dark:bg-emerald-500/10 dark:text-emerald-100">
+                        No cover yet
+                    </div>
+                    <span
+                        v-if="isAuthored(course.id)"
+                        class="absolute right-4 top-4 rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-900 dark:bg-emerald-500/20 dark:text-emerald-100"
+                    >
+                        Your course
+                    </span>
+                    <span
+                        v-else-if="isOwned(course.id)"
+                        class="absolute right-4 top-4 rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-900 dark:bg-emerald-500/20 dark:text-emerald-100"
+                    >
+                        Owned
+                    </span>
+                </div>
+                <div class="flex flex-1 flex-col gap-3 p-5">
+                    <h2 class="text-lg font-semibold text-foreground">{{ course.name }}</h2>
+                    <p class="text-sm text-muted-foreground">{{ course.description }}</p>
+                    <div class="mt-auto flex items-center justify-between text-sm">
+                        <span class="font-semibold text-emerald-700 dark:text-emerald-300">
+                            {{ formatPrice(course.price_cents, course.currency) }}
+                        </span>
+                        <Link
+                            :href="route('courses.show', course.id)"
+                            class="text-xs font-semibold text-emerald-700 hover:text-emerald-800 dark:text-emerald-300"
+                        >
+                            View details
+                        </Link>
+                    </div>
+                </div>
 
                 <div
                     v-if="canPurchase(course.id)"
-                    class="absolute inset-0 rounded-xl bg-slate-900/50 opacity-0 transition flex items-center justify-center pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto"
+                    class="absolute inset-0 flex items-center justify-center bg-slate-950/50 opacity-0 transition group-hover:opacity-100"
                 >
                     <Link
-                        :href="`/courses/${course.id}/purchase`"
-                        class="bg-rose-800 text-white px-6 py-2 rounded-full font-semibold shadow-md hover:bg-rose-600"
+                        :href="route('courses.purchase.show', course.id)"
+                        class="rounded-full bg-white px-6 py-2 text-sm font-semibold text-emerald-800 shadow-sm transition hover:bg-emerald-50"
                     >
                         Buy now
                     </Link>
                 </div>
             </div>
-        </div>
-
-
+        </section>
     </AppLayout>
 </template>

@@ -14,7 +14,7 @@ import { type BreadcrumbItem } from '@/types';
 const breadcrumbItems: BreadcrumbItem[] = [
     {
         title: 'Password settings',
-        href: '/settings/password',
+        href: route('password.edit'),
     },
 ];
 
@@ -55,10 +55,10 @@ const updatePassword = () => {
         <Head title="Password settings" />
 
         <SettingsLayout>
-            <div class="space-y-6">
+            <div class="flex flex-col gap-6">
                 <HeadingSmall title="Update password" description="Ensure your account is using a long, random password to stay secure" />
 
-                <form @submit.prevent="updatePassword" class="space-y-6">
+                <form @submit.prevent="updatePassword" class="flex flex-col gap-6">
                     <div class="grid gap-2">
                         <Label for="current_password">Current password</Label>
                         <Input

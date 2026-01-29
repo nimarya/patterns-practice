@@ -3,6 +3,7 @@ import AppLayout from '@/layouts/AppLayout.vue';
 import { type BreadcrumbItem } from '@/types';
 import { Head, router } from '@inertiajs/vue3';
 import { onMounted, ref } from 'vue';
+import { Button } from '@/components/ui/button';
 
 declare global {
     interface Window {
@@ -22,9 +23,9 @@ const props = defineProps<{
 }>();
 
 const breadcrumbs: BreadcrumbItem[] = [
-    { title: 'Courses', href: '/courses' },
-    { title: props.course.name, href: `/courses/${props.course.id}` },
-    { title: 'Purchase', href: '' },
+    { title: 'Courses', href: route('courses.index') },
+    { title: props.course.name, href: route('courses.show', props.course.id) },
+    { title: 'Purchase', href: route('courses.purchase.show', props.course.id) },
 ];
 
 const processing = ref(false);
@@ -80,10 +81,10 @@ async function setupStripe(): Promise<void> {
     cardElement.value = elements.value.create('card', {
         style: {
             base: {
-                fontFamily: '"Instrument Sans", system-ui, -apple-system, sans-serif',
+                fontFamily: '"Sora", system-ui, -apple-system, sans-serif',
                 fontSize: '16px',
                 color: '#111827',
-                '::placeholder': { color: '#9CA3AF' },
+                '::placeholder': { color: '#94A3B8' },
             },
         },
     });
@@ -93,7 +94,7 @@ async function setupStripe(): Promise<void> {
 }
 
 async function createPaymentIntent(): Promise<string> {
-    const response = await fetch(`/courses/${props.course.id}/payment-intent`, {
+    const response = await fetch(route('courses.purchase.intent', props.course.id), {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -156,47 +157,42 @@ onMounted(() => {
     <Head :title="`Purchase ${props.course.name}`" />
 
     <AppLayout :breadcrumbs="breadcrumbs">
-        <div class="max-w-xl mx-auto p-6 space-y-6">
-            <div class="space-y-2">
-                <h1 class="text-2xl font-bold">{{ props.course.name }}</h1>
-                <p class="text-gray-700 dark:text-gray-300">{{ props.course.description }}</p>
-                <p class="text-lg font-semibold text-rose-800">
+        <section class="mx-auto flex w-full max-w-2xl flex-col gap-6 rounded-3xl border border-border/60 bg-white/80 p-8 shadow-sm backdrop-blur dark:bg-slate-950/70">
+            <div class="flex flex-col gap-3">
+                <p class="text-xs font-semibold uppercase tracking-[0.2em] text-emerald-600/80 dark:text-emerald-300/70">Secure checkout</p>
+                <h1 class="text-3xl font-semibold tracking-tight text-foreground">{{ props.course.name }}</h1>
+                <p class="text-sm text-muted-foreground">{{ props.course.description }}</p>
+                <p class="text-lg font-semibold text-emerald-700 dark:text-emerald-300">
                     {{ formatPrice(props.course.price_cents, props.course.currency) }}
                 </p>
             </div>
 
-            <div v-if="statusMessage" class="rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-emerald-800">
+            <div v-if="statusMessage" class="rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-900 dark:border-emerald-500/30 dark:bg-emerald-500/10 dark:text-emerald-100">
                 {{ statusMessage }}
             </div>
 
-            <div v-if="errorMessage" class="rounded-xl border border-rose-200 bg-rose-50 p-4 text-rose-700">
+            <div v-if="errorMessage" class="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">
                 {{ errorMessage }}
             </div>
 
-            <form @submit.prevent="submit" class="space-y-4">
-                <div class="space-y-2">
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                        Card details
-                    </label>
+            <form @submit.prevent="submit" class="flex flex-col gap-5">
+                <div class="flex flex-col gap-2">
+                    <label class="text-sm font-medium text-foreground">Card details</label>
                     <div
                         id="card-element"
-                        class="rounded-xl border border-gray-200 dark:border-sidebar-border bg-white dark:bg-gray-900 px-3 py-3"
+                        class="rounded-2xl border border-border/70 bg-white px-3 py-3 text-sm shadow-sm focus-within:border-emerald-200 focus-within:ring-4 focus-within:ring-emerald-200/40 dark:bg-slate-950"
                     ></div>
-                    <p class="text-xs text-gray-500 dark:text-gray-400">
+                    <p class="text-xs text-muted-foreground">
                         Use the test card 4242 4242 4242 4242 with any future date, any CVC, and any ZIP.
                     </p>
                 </div>
 
                 <div class="flex items-center gap-3">
-                    <button
-                        type="submit"
-                        :disabled="processing || !stripeReady"
-                        class="bg-rose-800 text-white px-4 py-2 rounded-xl hover:bg-rose-600 disabled:opacity-50"
-                    >
+                    <Button type="submit" :disabled="processing || !stripeReady">
                         Pay now
-                    </button>
+                    </Button>
                 </div>
             </form>
-        </div>
+        </section>
     </AppLayout>
 </template>

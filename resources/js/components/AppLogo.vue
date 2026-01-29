@@ -3,10 +3,15 @@ import AppLogoIcon from '@/components/AppLogoIcon.vue';
 </script>
 
 <template>
-    <div class="flex aspect-square size-8 items-center justify-center rounded-md bg-sidebar-primary text-sidebar-primary-foreground">
-        <AppLogoIcon class="size-5 fill-current text-white dark:text-black" />
-    </div>
-    <div class="ml-1 grid flex-1 text-left text-sm">
-        <span class="mb-0.5 truncate font-semibold leading-none">Laravel Starter Kit</span>
+    <div class="flex items-center gap-3">
+        <div
+            class="flex h-9 w-9 items-center justify-center rounded-2xl bg-emerald-500 text-white shadow-sm shadow-emerald-200/60 dark:bg-emerald-400 dark:text-emerald-950 dark:shadow-emerald-500/10"
+        >
+            <AppLogoIcon class="size-6 fill-current" />
+        </div>
+        <div class="flex flex-col leading-tight">
+            <span class="text-sm font-semibold tracking-tight text-foreground">nimaruya</span>
+            <span class="text-xs text-muted-foreground">online school</span>
+        </div>
     </div>
 </template>
