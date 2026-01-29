@@ -16,6 +16,7 @@ const description = ref('');
 const type = ref('major_semester');
 const photo = ref<File | null>(null);
 const photoPreview = ref<string | null>(null);
+const price = ref('');
 
 function handleFileChange(event: Event) {
     const target = event.target as HTMLInputElement;
@@ -31,6 +32,8 @@ function submit() {
     formData.append('description', description.value);
     formData.append('user_id', currentUserId);
     formData.append('type', type.value);
+    formData.append('price', price.value);
+    formData.append('currency', 'usd');
 
     if (photo.value) {
         formData.append('photo', photo.value);
@@ -60,6 +63,15 @@ function submit() {
                 rows="4"
                 class="border rounded p-2 w-full"
             ></textarea>
+
+            <input
+                v-model="price"
+                type="number"
+                step="0.01"
+                min="0.01"
+                placeholder="Price (USD)"
+                class="border rounded p-2 w-full"
+            />
 
             <select v-model="type" class="border rounded p-2 w-full">
                 <option value="major_semester">Major Semester</option>
