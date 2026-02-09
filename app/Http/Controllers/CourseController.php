@@ -31,7 +31,7 @@ class CourseController extends Controller
             'ownedCourseIds' => $ownedCourseIds,
             'authoredCourseIds' => $authoredCourseIds,
             'can' => [
-                'createCourse' => fn () => Auth::user()?->can('create course') ?? false,
+                'createCourse' => fn () => Auth::user()?->can('courses.create') ?? false,
             ],
         ]);
     }

@@ -3,13 +3,13 @@ import AppLogo from '@/components/AppLogo.vue';
 import Breadcrumbs from '@/components/Breadcrumbs.vue';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import UserMenuContent from '@/components/UserMenuContent.vue';
 import { getInitials } from '@/composables/useInitials';
-import type { BreadcrumbItem, NavItem } from '@/types';
+import type { BreadcrumbItem, NavItem, SharedData } from '@/types';
 import { Link, usePage } from '@inertiajs/vue3';
-import { Menu, BookOpenCheck, BookOpen } from 'lucide-vue-next';
+import { BookOpen, BookOpenCheck, ChevronDown, Menu, ShieldCheck, Users } from 'lucide-vue-next';
 import { computed } from 'vue';
 
 interface Props {
@@ -20,11 +20,33 @@ const props = withDefaults(defineProps<Props>(), {
     breadcrumbs: () => [],
 });
 
-const page = usePage();
+const page = usePage<SharedData>();
 const auth = computed(() => page.props.auth);
 
 const currentPath = computed(() => page.url.split('?')[0]);
-const isCurrentRoute = computed(() => (url: string) => currentPath.value === url);
+
+const normalizePath = (url: string): string => {
+    if (!url) {
+        return '/';
+    }
+
+    if (url.startsWith('http://') || url.startsWith('https://')) {
+        return new URL(url).pathname;
+    }
+
+    return url.startsWith('/') ? url : `/${url}`;
+};
+
+const isCurrentRoute = computed(() => (url: string) => {
+    const normalizedCurrentPath = normalizePath(currentPath.value);
+    const normalizedTargetPath = normalizePath(url);
+
+    if (normalizedCurrentPath === normalizedTargetPath) {
+        return true;
+    }
+
+    return normalizedTargetPath !== '/' && normalizedCurrentPath.startsWith(`${normalizedTargetPath}/`);
+});
 
 const activeItemStyles = computed(() => (url: string) =>
     isCurrentRoute.value(url)
@@ -44,6 +66,32 @@ const mainNavItems: NavItem[] = [
         icon: BookOpen,
     },
 ];
+
+const settingsNavItems = computed<NavItem[]>(() => {
+    const items: NavItem[] = [];
+
+    if (auth.value?.canSettingsUsers) {
+        items.push({
+            title: 'Users',
+            href: route('admin.users.index'),
+            icon: Users,
+        });
+    }
+
+    if (auth.value?.canSettingsPermissions) {
+        items.push({
+            title: 'Permissions',
+            href: route('admin.permissions.index'),
+            icon: ShieldCheck,
+        });
+    }
+
+    return items;
+});
+
+const canViewSettings = computed(() => settingsNavItems.value.length > 0);
+
+const isAdminSection = computed(() => currentPath.value.startsWith('/admin/'));
 </script>
 
 <template>
@@ -76,6 +124,21 @@ const mainNavItems: NavItem[] = [
                                             {{ item.title }}
                                         </Link>
                                     </nav>
+                                    <div v-if="canViewSettings" class="flex flex-col gap-2">
+                                        <p class="px-3 text-xs font-semibold uppercase tracking-[0.12em] text-muted-foreground">Settings</p>
+                                        <nav class="flex flex-col gap-1">
+                                            <Link
+                                                v-for="item in settingsNavItems"
+                                                :key="item.title"
+                                                :href="item.href"
+                                                class="flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium transition"
+                                                :class="activeItemStyles(item.href)"
+                                            >
+                                                <component v-if="item.icon" :is="item.icon" class="h-4 w-4" />
+                                                {{ item.title }}
+                                            </Link>
+                                        </nav>
+                                    </div>
                                     <Button as-child class="w-full">
                                         <Link :href="route('courses.index')">Browse courses</Link>
                                     </Button>
@@ -100,6 +163,31 @@ const mainNavItems: NavItem[] = [
                         <component v-if="item.icon" :is="item.icon" class="h-4 w-4" />
                         {{ item.title }}
                     </Link>
+                    <DropdownMenu v-if="canViewSettings">
+                        <DropdownMenuTrigger :as-child="true">
+                            <Button
+                                variant="ghost"
+                                class="rounded-full px-4 py-2 text-sm font-medium transition"
+                                :class="isAdminSection ? 'bg-emerald-100 text-emerald-900 shadow-sm dark:bg-emerald-500/20 dark:text-emerald-100' : 'text-muted-foreground hover:text-foreground hover:bg-muted/70 dark:hover:bg-muted/40'"
+                            >
+                                <span>Settings</span>
+                                <ChevronDown class="h-4 w-4" />
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="start" class="w-48 rounded-2xl p-1">
+                            <DropdownMenuItem
+                                v-for="item in settingsNavItems"
+                                :key="item.title"
+                                :as-child="true"
+                                class="rounded-xl"
+                            >
+                                <Link :href="item.href" class="flex w-full items-center gap-2">
+                                    <component v-if="item.icon" :is="item.icon" class="h-4 w-4" />
+                                    {{ item.title }}
+                                </Link>
+                            </DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
                 </nav>
 
                 <div class="ml-auto flex items-center gap-2">

@@ -111,7 +111,7 @@ class CourseControllerTest extends TestCase
     {
         app(PermissionRegistrar::class)->forgetCachedPermissions();
 
-        $permission = Permission::create(['name' => 'create course']);
+        $permission = Permission::create(['name' => 'courses.create']);
         $role = Role::create(['name' => 'teacher']);
 
         return $role->givePermissionTo($permission);
